@@ -1,5 +1,8 @@
 import java.util.Scanner;
+
 public class Piezadomino {
+    int ladoA;
+    int ladoB;
     public int elegirModo(int numero){
     if(numero == 6){
         int[] a = new int[35];
