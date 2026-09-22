@@ -10,9 +10,14 @@ public class Piezadomino {
             this.ladoA = ladoA;
             this.ladoB = ladoB;
         }
+
+        @Override
+        public String toString() {
+            return "[" + ladoA + "|" + ladoB + "]";
+        }
     }
 
-    public int elegirModo(int numero) {
+    public Ficha[] elegirModo(int numero) {
         if (numero == 6) {
             Ficha[] a = new Ficha[35];
             int totalPiezas = 0;
@@ -29,8 +34,9 @@ public class Piezadomino {
                 totalPiezas++;
             }
             
-            System.out.println("\n--- Fichas Aleatorias ---");
             boolean[] usados = new boolean[totalPiezas];
+            Ficha[] fichasSeleccionadas = new Ficha[7];
+            
             for (int k = 0; k < 7; k++) {
                 int random;
                 do {
@@ -38,12 +44,13 @@ public class Piezadomino {
                 } while (usados[random]);
                 
                 usados[random] = true;
+                fichasSeleccionadas[k] = a[random]; 
                 
-                int ladoA = a[random].ladoA;
-                int ladoB = a[random].ladoB;
-                System.out.print("[" + (ladoA == 99 ? "C" : ladoA) + "|" + ladoB + "]");
+                
+                System.out.println(k+":"+fichasSeleccionadas[k] + " ");
             }
-            return totalPiezas;
+            System.out.println(); 
+            return fichasSeleccionadas; 
         }
         else if (numero == 7) {
             Ficha[] a = new Ficha[44];
@@ -61,8 +68,9 @@ public class Piezadomino {
                 totalPiezas++;
             }
             
-            System.out.println("\n--- Fichas Aleatorias ---");
             boolean[] usados = new boolean[totalPiezas];
+            Ficha[] fichasSeleccionadas = new Ficha[7];
+            
             for (int k = 0; k < 7; k++) {
                 int random;
                 do {
@@ -70,12 +78,12 @@ public class Piezadomino {
                 } while (usados[random]);
                 
                 usados[random] = true;
+                fichasSeleccionadas[k] = a[random];
                 
-                int ladoA = a[random].ladoA;
-                int ladoB = a[random].ladoB;
-                System.out.print("[" + (ladoA == 99 ? "C" : ladoA) + "|" + ladoB + "]");
+                System.out.println(k+":"+fichasSeleccionadas[k] + " ");
             }
-            return totalPiezas;
+            System.out.println();
+            return fichasSeleccionadas;
         }
         else if (numero == 8) {
             Ficha[] a = new Ficha[54];
@@ -93,8 +101,9 @@ public class Piezadomino {
                 totalPiezas++;
             }
             
-            System.out.println("\n--- Fichas Aleatorias ---");
             boolean[] usados = new boolean[totalPiezas];
+            Ficha[] fichasSeleccionadas = new Ficha[7];
+            
             for (int k = 0; k < 7; k++) {
                 int random;
                 do {
@@ -102,13 +111,14 @@ public class Piezadomino {
                 } while (usados[random]);
                 
                 usados[random] = true;
+                fichasSeleccionadas[k] = a[random];
                 
-                int ladoA = a[random].ladoA;
-                int ladoB = a[random].ladoB;
-                System.out.print("[" + (ladoA == 99 ? "C" : ladoA) + "|" + ladoB + "]");
+                
+                System.out.println(k+":"+fichasSeleccionadas[k] + " ");
             }
-            return totalPiezas;
+            System.out.println();
+            return fichasSeleccionadas;
         }
-        return 0;
+        return null; 
     }
 }
