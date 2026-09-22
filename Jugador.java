@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class Piezadomino {
+public class Jugador {
 
     public static class Ficha {
         int ladoA;
