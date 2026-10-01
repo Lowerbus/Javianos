@@ -10,15 +10,39 @@ public class Partida {
 
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("=== MENÚ PRINCIPAL ===");
-        System.out.println("1: Jugar contra otra persona");
-        System.out.println("2: Jugar contra la computadora (Bot)");
-        System.out.print("Seleccione el tipo de partida: ");
-        int tipoOponente = scanner.nextInt();
+        
+        int tipoOponente = 0;
+        while (tipoOponente != 1 && tipoOponente != 2) {
+            System.out.println("=== MENÚ PRINCIPAL ===");
+            System.out.println("1: Jugar contra otra persona");
+            System.out.println("2: Jugar contra la computadora (Bot)");
+            System.out.print("Seleccione el tipo de partida (1 o 2): ");
+            if (scanner.hasNextInt()) {
+                tipoOponente = scanner.nextInt();
+                if (tipoOponente != 1 && tipoOponente != 2) {
+                    System.out.println(" Opción inválida. Por favor, elija 1 o 2.\n");
+                }
+            } else {
+                System.out.println("Entrada inválida. Ingrese un número.\n");
+                scanner.next(); 
+            }
+        }
         scanner.nextLine();
 
-        System.out.print("¿Qué modo desea jugar? (6, 7 u 8): ");
-        int numero = scanner.nextInt();
+        
+        int numero = 0;
+        while (numero != 6 && numero != 7 && numero != 8) {
+            System.out.print("¿Qué modo desea jugar? (6, 7 u 8): ");
+            if (scanner.hasNextInt()) {
+                numero = scanner.nextInt();
+                if (numero != 6 && numero != 7 && numero != 8) {
+                    System.out.println("Modo inválido. Elija 6, 7 u 8.\n");
+                }
+            } else {
+                System.out.println("Entrada inválida. Ingrese un número.\n");
+                scanner.next();
+            }
+        }
         scanner.nextLine();
 
         System.out.print("¿Cómo se llama el jugador 1? ");
@@ -54,7 +78,6 @@ public class Partida {
             u2.setnombre(nombre2);
             j2.elegirModo(numero);
 
-            // Si es contra el bot, inicializamos su inteligencia artificial con la mano generada de j2
             if (tipoOponente == 2) {
                 bot = new JugadorAutomatico(j2.getMano());
             }
@@ -129,42 +152,71 @@ public class Partida {
                     printTablero(tablero, fichasLI, fichaLD);
                     printManoJugador(j1, nombre1);
 
-                    System.out.println("\n¿Qué desea hacer?");
-                    System.out.println("1: Colocar una ficha");
-                    System.out.println("2: Tomar del pozo");
-                    System.out.println("3: Pasar");
-                    int opcion = scanner.nextInt();
+                    int opcion = 0;
+                    while (opcion < 1 || opcion > 3) {
+                        System.out.println("\n¿Qué desea hacer?");
+                        System.out.println("1: Colocar una ficha");
+                        System.out.println("2: Tomar del pozo");
+                        System.out.println("3: Pasar");
+                        if (scanner.hasNextInt()) {
+                            opcion = scanner.nextInt();
+                            if (opcion < 1 || opcion > 3) {
+                                System.out.println("Opción inválida. Elija entre 1, 2 o 3.");
+                            }
+                        } else {
+                            System.out.println("Entrada inválida. Ingrese un número.");
+                            scanner.next();
+                        }
+                    }
 
                     if (opcion == 1) {
-                        System.out.println("¿Qué número de ficha de tu mano desea colocar? ");
-                        int numero3 = scanner.nextInt();
+                        int numero3 = -1;
+                        while (numero3 < 0 || numero3 > 6 || j1.getMano()[numero3] == null) {
+                            System.out.println("¿Qué número de ficha de tu mano desea colocar? (0 a 6): ");
+                            if (scanner.hasNextInt()) {
+                                numero3 = scanner.nextInt();
+                                if (numero3 < 0 || numero3 > 6 || j1.getMano()[numero3] == null) {
+                                    System.out.println("Ficha no válida o posición vacía. Intente de nuevo.");
+                                }
+                            } else {
+                                System.out.println("Entrada inválida.");
+                                scanner.next();
+                            }
+                        }
 
-                        System.out.println("¿De qué lado desea colocarlo? (1: Izquierdo, 2: Derecho)");
-                        int lado = scanner.nextInt();
+                        int lado = 0;
+                        while (lado != 1 && lado != 2) {
+                            System.out.println("¿De qué lado desea colocarlo? (1: Izquierdo, 2: Derecho): ");
+                            if (scanner.hasNextInt()) {
+                                lado = scanner.nextInt();
+                                if (lado != 1 && lado != 2) {
+                                    System.out.println("Lado inválido. Elija 1 o 2.");
+                                }
+                            } else {
+                                System.out.println("Entrada inválida.");
+                                scanner.next();
+                            }
+                        }
 
                         if (lado == 1) {
-                            if (numero3 >= 0 && numero3 < 7 && j1.getMano()[numero3] != null &&
-                                    (j1.getMano()[numero3].ladoB == 99 || tablero[fichasLI + 1].ladoA == 99 || j1.getMano()[numero3].ladoB == tablero[fichasLI + 1].ladoA)) {
-
+                            if (j1.getMano()[numero3].ladoB == 99 || tablero[fichasLI + 1].ladoA == 99 || j1.getMano()[numero3].ladoB == tablero[fichasLI + 1].ladoA) {
                                 tablero[fichasLI] = j1.getMano()[numero3];
                                 j1.getMano()[numero3] = null;
                                 fichasLI--;
                                 fichasJ1--;
                                 turnoJugador = 1;
                             } else {
-                                System.out.println("Ficha inválida");
+                                System.out.println("❌icha inválida para este lado del tablero.");
                             }
                         } else if (lado == 2) {
-                            if (numero3 >= 0 && numero3 < 7 && j1.getMano()[numero3] != null &&
-                                    (tablero[fichaLD - 1].ladoB == 99 || j1.getMano()[numero3].ladoA == 99 || tablero[fichaLD - 1].ladoB == j1.getMano()[numero3].ladoA)) {
-
+                            if (tablero[fichaLD - 1].ladoB == 99 || j1.getMano()[numero3].ladoA == 99 || tablero[fichaLD - 1].ladoB == j1.getMano()[numero3].ladoA) {
                                 tablero[fichaLD] = j1.getMano()[numero3];
                                 j1.getMano()[numero3] = null;
                                 fichaLD++;
                                 fichasJ1--;
                                 turnoJugador = 1;
                             } else {
-                                System.out.println("Ficha inválida");
+                                System.out.println("❌Ficha inválida para este lado del tablero.");
                             }
                         }
                     } else if (opcion == 2) {
@@ -180,7 +232,7 @@ public class Partida {
                             }
                         }
                         if (!agregado) {
-                            System.out.println("No hay espacios vacíos.");
+                            System.out.println("No hay espacios vacíos en tu mano.");
                         }
                         turnoJugador = 1;
                     } else if (opcion == 3) {
@@ -188,14 +240,14 @@ public class Partida {
                     }
                 }
 
-                // Turno del Jugador 2 (Persona o Bot)
+
                 while (turnoJugador == 1 && fichasJ1 > 0 && fichasJ2 > 0) {
                     System.out.println("");
                     System.out.println(nombre2);
                     printTablero(tablero, fichasLI, fichaLD);
 
                     if (tipoOponente == 2) {
-                        // --- LÓGICA DEL BOT AUTOMÁTICO ---
+                        
                         printManoJugador(j2, nombre2);
                         int valorExtremoDerecho = (tablero[fichaLD - 1] != null && tablero[fichaLD - 1].ladoB != 99) ? tablero[fichaLD - 1].ladoB : 0;
                         
@@ -208,47 +260,76 @@ public class Partida {
                             fichaLD++;
                             fichasJ2--;
                         }
-                        turnoJugador = 0; // Pasa el turno al jugador 1
+                        turnoJugador = 0;
                     } else {
-                        // --- LÓGICA DE JUGADOR HUMANO 2 ---
+
                         printManoJugador(j2, nombre2);
 
-                        System.out.println("\n¿Qué desea hacer?");
-                        System.out.println("1: Colocar una ficha");
-                        System.out.println("2: Tomar del pozo");
-                        System.out.println("3: Pasar");
-                        int opcion = scanner.nextInt();
+                        int opcion = 0;
+                        while (opcion < 1 || opcion > 3) {
+                            System.out.println("\n¿Qué desea hacer?");
+                            System.out.println("1: Colocar una ficha");
+                            System.out.println("2: Tomar del pozo");
+                            System.out.println("3: Pasar");
+                            if (scanner.hasNextInt()) {
+                                opcion = scanner.nextInt();
+                                if (opcion < 1 || opcion > 3) {
+                                    System.out.println("Opción inválida. Elija entre 1, 2 o 3.");
+                                }
+                            } else {
+                                System.out.println("Entrada inválida. Ingrese un número.");
+                                scanner.next();
+                            }
+                        }
 
                         if (opcion == 1) {
-                            System.out.println("¿Qué número de ficha de tu mano desea colocar? (0 a 6)");
-                            int numero3 = scanner.nextInt();
+                            int numero3 = -1;
+                            while (numero3 < 0 || numero3 > 6 || j2.getMano()[numero3] == null) {
+                                System.out.println("¿Qué número de ficha de tu mano desea colocar? (0 a 6): ");
+                                if (scanner.hasNextInt()) {
+                                    numero3 = scanner.nextInt();
+                                    if (numero3 < 0 || numero3 > 6 || j2.getMano()[numero3] == null) {
+                                        System.out.println(" Ficha no válida o posición vacía. Intente de nuevo.");
+                                    }
+                                } else {
+                                    System.out.println(" Entrada inválida.");
+                                    scanner.next();
+                                }
+                            }
 
-                            System.out.println("¿De qué lado desea colocarlo? (1: Izquierdo, 2: Derecho)");
-                            int lado = scanner.nextInt();
+                            int lado = 0;
+                            while (lado != 1 && lado != 2) {
+                                System.out.println("¿De qué lado desea colocarlo? (1: Izquierdo, 2: Derecho): ");
+                                if (scanner.hasNextInt()) {
+                                    lado = scanner.nextInt();
+                                    if (lado != 1 && lado != 2) {
+                                        System.out.println("Lado inválido. Elija 1 o 2.");
+                                    }
+                                } else {
+                                    System.out.println("Entrada inválida.");
+                                    scanner.next();
+                                }
+                            }
 
                             if (lado == 1) {
-                                if (numero3 >= 0 && numero3 < 7 && j2.getMano()[numero3] != null &&
-                                        (j2.getMano()[numero3].ladoB == 99 || tablero[fichasLI + 1].ladoA == 99 || j2.getMano()[numero3].ladoB == tablero[fichasLI + 1].ladoA)) {
-
+                                if (j2.getMano()[numero3].ladoB == 99 || tablero[fichasLI + 1].ladoA == 99 || j2.getMano()[numero3].ladoB == tablero[fichasLI + 1].ladoA) {
                                     tablero[fichasLI] = j2.getMano()[numero3];
                                     j2.getMano()[numero3] = null;
                                     fichasLI--;
                                     fichasJ2--;
                                     turnoJugador = 0;
                                 } else {
-                                    System.out.println(" Ficha inválida.");
+                                    System.out.println("❌Ficha inválida para este lado del tablero.");
                                 }
                             } else if (lado == 2) {
-                                if (numero3 >= 0 && numero3 < 7 && j2.getMano()[numero3] != null &&
-                                        (tablero[fichaLD - 1].ladoB == 99 || j2.getMano()[numero3].ladoA == 99 || tablero[fichaLD - 1].ladoB == j2.getMano()[numero3].ladoA)) {
-
+                                if (tablero[fichaLD - 1].ladoB == 99 || j2.getMano()[numero3].ladoA == 99 || tablero[fichaLD - 1].ladoB == j2.getMano()[numero3].ladoA) {
                                     tablero[fichaLD] = j2.getMano()[numero3];
                                     j2.getMano()[numero3] = null;
                                     fichaLD++;
                                     fichasJ2--;
                                     turnoJugador = 0;
                                 } else {
-                                    System.out.println("Ficha inválida.");
+                                    System.out.println("❌Ficha inválida para este lado del tablero.");
                                 }
                             }
                         } else if (opcion == 2) {
@@ -259,12 +340,12 @@ public class Partida {
                                     j2.getMano()[i] = nuevaFicha;
                                     fichasJ2++;
                                     agregado = true;
-                                    System.out.println(" Has tomado del pozo la ficha: " + nuevaFicha + " y se guardó en la posición [" + i + "]");
+                                    System.out.println("Has tomado del pozo la ficha: " + nuevaFicha + " y se guardó en la posición [" + i + "]");
                                     break;
                                 }
                             }
                             if (!agregado) {
-                                System.out.println("⚠️️ No hay espacios vacíos en tu mano para tomar otra ficha.");
+                                System.out.println("No hay espacios vacíos en tu mano.");
                             }
                             turnoJugador = 0;
                         } else if (opcion == 3) {
@@ -309,7 +390,7 @@ public class Partida {
         if (70 <= puntajeJ1) {
             System.out.println(" ¡" + nombre1 + " gana la partida completa con " + puntajeJ1 + " puntos!");
         } else if (70 <= puntajeJ2) {
-            System.out.println(" ¡" + nombre2 + " gana la partida completa con " + puntajeJ2 + " puntos!");
+            System.out.println("¡" + nombre2 + " gana la partida completa con " + puntajeJ2 + " puntos!");
         }
 
         scanner.close();
