@@ -10,7 +10,6 @@ public class Partida {
 
         Scanner scanner = new Scanner(System.in);
         
-        
         int tipoOponente = 0;
         while (tipoOponente != 1 && tipoOponente != 2) {
             System.out.println("=== MENÚ PRINCIPAL ===");
@@ -20,16 +19,15 @@ public class Partida {
             if (scanner.hasNextInt()) {
                 tipoOponente = scanner.nextInt();
                 if (tipoOponente != 1 && tipoOponente != 2) {
-                    System.out.println(" Opción inválida. Por favor, elija 1 o 2.\n");
+                    System.out.println("Opción inválida. Por favor, elija 1 o 2.\n");
                 }
             } else {
                 System.out.println("Entrada inválida. Ingrese un número.\n");
-                scanner.next(); 
+                scanner.next();
             }
         }
         scanner.nextLine();
 
-        
         int numero = 0;
         while (numero != 6 && numero != 7 && numero != 8) {
             System.out.print("¿Qué modo desea jugar? (6, 7 u 8): ");
@@ -145,7 +143,6 @@ public class Partida {
             
             while (fichasJ1 > 0 && fichasJ2 > 0) {
 
-                // Turno del Jugador 1
                 while (turnoJugador == 0 && fichasJ1 > 0 && fichasJ2 > 0) {
                     System.out.println("");
                     System.out.println(nombre1);
@@ -206,7 +203,7 @@ public class Partida {
                                 fichasJ1--;
                                 turnoJugador = 1;
                             } else {
-                                System.out.println("❌icha inválida para este lado del tablero.");
+                                System.out.println("Ficha inválida para este lado del tablero.");
                             }
                         } else if (lado == 2) {
                             if (tablero[fichaLD - 1].ladoB == 99 || j1.getMano()[numero3].ladoA == 99 || tablero[fichaLD - 1].ladoB == j1.getMano()[numero3].ladoA) {
@@ -216,7 +213,7 @@ public class Partida {
                                 fichasJ1--;
                                 turnoJugador = 1;
                             } else {
-                                System.out.println("❌Ficha inválida para este lado del tablero.");
+                                System.out.println("Ficha inválida para este lado del tablero.");
                             }
                         }
                     } else if (opcion == 2) {
@@ -240,29 +237,32 @@ public class Partida {
                     }
                 }
 
-
                 while (turnoJugador == 1 && fichasJ1 > 0 && fichasJ2 > 0) {
                     System.out.println("");
                     System.out.println(nombre2);
                     printTablero(tablero, fichasLI, fichaLD);
 
                     if (tipoOponente == 2) {
-                        
                         printManoJugador(j2, nombre2);
-                        int valorExtremoDerecho = (tablero[fichaLD - 1] != null && tablero[fichaLD - 1].ladoB != 99) ? tablero[fichaLD - 1].ladoB : 0;
                         
-                        Jugador.Ficha respuesta = bot.responder(valorExtremoDerecho);
+                        int valorIzquierdo = (tablero[fichasLI + 1] != null) ? tablero[fichasLI + 1].ladoA : 0;
+                        int valorDerecho = (tablero[fichaLD - 1] != null) ? tablero[fichaLD - 1].ladoB : 0;
+
+                        Jugador.Ficha respuesta = bot.responder(valorDerecho);
                         if (respuesta == null) {
-                            System.out.println("El bot pasa el turno.");
+                            respuesta = bot.responder(valorIzquierdo);
+                        }
+
+                        if (respuesta == null) {
+                            System.out.println("El automático pasa.");
                         } else {
-                            System.out.println("El bot juega: " + respuesta);
+                            System.out.println("El automático juega: " + respuesta);
                             tablero[fichaLD] = respuesta;
                             fichaLD++;
                             fichasJ2--;
                         }
                         turnoJugador = 0;
                     } else {
-
                         printManoJugador(j2, nombre2);
 
                         int opcion = 0;
@@ -289,10 +289,10 @@ public class Partida {
                                 if (scanner.hasNextInt()) {
                                     numero3 = scanner.nextInt();
                                     if (numero3 < 0 || numero3 > 6 || j2.getMano()[numero3] == null) {
-                                        System.out.println(" Ficha no válida o posición vacía. Intente de nuevo.");
+                                        System.out.println("Ficha no válida o posición vacía. Intente de nuevo.");
                                     }
                                 } else {
-                                    System.out.println(" Entrada inválida.");
+                                    System.out.println("Entrada inválida.");
                                     scanner.next();
                                 }
                             }
@@ -319,7 +319,7 @@ public class Partida {
                                     fichasJ2--;
                                     turnoJugador = 0;
                                 } else {
-                                    System.out.println("❌Ficha inválida para este lado del tablero.");
+                                    System.out.println("Ficha inválida para este lado del tablero.");
                                 }
                             } else if (lado == 2) {
                                 if (tablero[fichaLD - 1].ladoB == 99 || j2.getMano()[numero3].ladoA == 99 || tablero[fichaLD - 1].ladoB == j2.getMano()[numero3].ladoA) {
@@ -329,7 +329,7 @@ public class Partida {
                                     fichasJ2--;
                                     turnoJugador = 0;
                                 } else {
-                                    System.out.println("❌Ficha inválida para este lado del tablero.");
+                                    System.out.println("Ficha inválida para este lado del tablero.");
                                 }
                             }
                         } else if (opcion == 2) {
@@ -356,7 +356,7 @@ public class Partida {
             }
 
             if (fichasJ1 <= 0) {
-                System.out.println(" ¡" + nombre1 + " se ha quedado sin fichas y gana la ronda!");
+                System.out.println("¡" + nombre1 + " se ha quedado sin fichas y gana la ronda!");
 
                 int puntosGanados = 0;
                 for (Jugador.Ficha f : j2.getMano()) {
@@ -370,7 +370,7 @@ public class Partida {
                 System.out.println("Puntos sumados a " + nombre1 + ": +" + puntosGanados + " (Total acumulado: " + puntajeJ1 + ")");
 
             } else if (fichasJ2 <= 0) {
-                System.out.println("\n ¡" + nombre2 + " se ha quedado sin fichas y gana la ronda!");
+                System.out.println("\n¡" + nombre2 + " se ha quedado sin fichas y gana la ronda!");
 
                 int puntosGanados = 0;
                 for (Jugador.Ficha f : j1.getMano()) {
@@ -388,7 +388,7 @@ public class Partida {
         }
 
         if (70 <= puntajeJ1) {
-            System.out.println(" ¡" + nombre1 + " gana la partida completa con " + puntajeJ1 + " puntos!");
+            System.out.println("¡" + nombre1 + " gana la partida completa con " + puntajeJ1 + " puntos!");
         } else if (70 <= puntajeJ2) {
             System.out.println("¡" + nombre2 + " gana la partida completa con " + puntajeJ2 + " puntos!");
         }
