@@ -118,6 +118,49 @@ public class Jugador {
     }
 
     public Ficha tomarDelPozo(int numero) {
+        if (numero == 6) {
+            int limite = 35;
+            Ficha[] todas = new Ficha[limite];
+            int idx = 0;
+            for (int i = 0; i < 7; i++) {
+                for (int j = i; j < 7; j++) {
+                    todas[idx++] = new Ficha(i, j);
+                }
+            }
+            for (int i = 0; i < 7; i++) {
+                todas[idx++] = new Ficha(99, i);
+            }
+            int aleatorio = (int) (Math.random() * limite);
+            return todas[aleatorio];
+        } else if (numero == 7) {
+            int limite = 44;
+            Ficha[] todas = new Ficha[limite];
+            int idx = 0;
+            for (int i = 0; i < 8; i++) {
+                for (int j = i; j < 8; j++) {
+                    todas[idx++] = new Ficha(i, j);
+                }
+            }
+            for (int i = 0; i < 8; i++) {
+                todas[idx++] = new Ficha(99, i);
+            }
+            int aleatorio = (int) (Math.random() * limite);
+            return todas[aleatorio];
+        } else if (numero == 8) {
+            int limite = 54;
+            Ficha[] todas = new Ficha[limite];
+            int idx = 0;
+            for (int i = 0; i < 9; i++) {
+                for (int j = i; j < 9; j++) {
+                    todas[idx++] = new Ficha(i, j);
+                }
+            }
+            for (int i = 0; i < 9; i++) {
+                todas[idx++] = new Ficha(99, i);
+            }
+            int aleatorio = (int) (Math.random() * limite);
+            return todas[aleatorio];
+        }
         return new Ficha(0, 0);
     }
 }
