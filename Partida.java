@@ -9,7 +9,15 @@ public class Partida {
         Usuario u2 = new Usuario();
 
         Scanner scanner = new Scanner(System.in);
-        System.out.print("¿Qué modo desea jugar? ");
+        
+        System.out.println("=== MENÚ PRINCIPAL ===");
+        System.out.println("1: Jugar contra otra persona");
+        System.out.println("2: Jugar contra la computadora (Bot)");
+        System.out.print("Seleccione el tipo de partida: ");
+        int tipoOponente = scanner.nextInt();
+        scanner.nextLine();
+
+        System.out.print("¿Qué modo desea jugar? (6, 7 u 8): ");
         int numero = scanner.nextInt();
         scanner.nextLine();
 
@@ -17,8 +25,15 @@ public class Partida {
         String nombre1 = scanner.nextLine();
         int puntajeJ1 = 0;
 
-        System.out.print("¿Cómo se llama el jugador 2? ");
-        String nombre2 = scanner.nextLine();
+        String nombre2 = "";
+        JugadorAutomatico bot = null;
+
+        if (tipoOponente == 2) {
+            nombre2 = "Bot Automático";
+        } else {
+            System.out.print("¿Cómo se llama el jugador 2? ");
+            nombre2 = scanner.nextLine();
+        }
         int puntajeJ2 = 0;
 
         Jugador.Ficha[] tablero = new Jugador.Ficha[100];
@@ -39,6 +54,11 @@ public class Partida {
             u2.setnombre(nombre2);
             j2.elegirModo(numero);
 
+            // Si es contra el bot, inicializamos su inteligencia artificial con la mano generada de j2
+            if (tipoOponente == 2) {
+                bot = new JugadorAutomatico(j2.getMano());
+            }
+
             fichasJ1 = 7;
             fichasJ2 = 7;
 
@@ -46,7 +66,6 @@ public class Partida {
             int indiceDobleJugador = -1;
             int quienTieneElDoble = -1;
             int dobleBuscado = numero;
-
 
             while (dobleBuscado >= 0 && !encontradoDoble) {
                 for (int i = 0; i < 7; i++) {
@@ -100,8 +119,10 @@ public class Partida {
             }
 
             System.out.println("tablero: " + tablero[50] + "\n");
+            
             while (fichasJ1 > 0 && fichasJ2 > 0) {
 
+                // Turno del Jugador 1
                 while (turnoJugador == 0 && fichasJ1 > 0 && fichasJ2 > 0) {
                     System.out.println("");
                     System.out.println(nombre1);
@@ -166,68 +187,89 @@ public class Partida {
                         turnoJugador = 1;
                     }
                 }
+
+                // Turno del Jugador 2 (Persona o Bot)
                 while (turnoJugador == 1 && fichasJ1 > 0 && fichasJ2 > 0) {
                     System.out.println("");
                     System.out.println(nombre2);
                     printTablero(tablero, fichasLI, fichaLD);
-                    printManoJugador(j2, nombre2);
 
-                    System.out.println("\n¿Qué desea hacer?");
-                    System.out.println("1: Colocar una ficha");
-                    System.out.println("2: Tomar del pozo");
-                    System.out.println("3: Pasar");
-                    int opcion = scanner.nextInt();
-
-                    if (opcion == 1) {
-                        System.out.println("¿Qué número de ficha de tu mano desea colocar? (0 a 6)");
-                        int numero3 = scanner.nextInt();
-
-                        System.out.println("¿De qué lado desea colocarlo? (1: Izquierdo, 2: Derecho)");
-                        int lado = scanner.nextInt();
-
-                        if (lado == 1) {
-                            if (numero3 >= 0 && numero3 < 7 && j2.getMano()[numero3] != null &&
-                                    (j2.getMano()[numero3].ladoB == 99 || tablero[fichasLI + 1].ladoA == 99 || j2.getMano()[numero3].ladoB == tablero[fichasLI + 1].ladoA)) {
-
-                                tablero[fichasLI] = j2.getMano()[numero3];
-                                j2.getMano()[numero3] = null;
-                                fichasLI--;
-                                fichasJ2--;
-                                turnoJugador = 0;
-                            } else {
-                                System.out.println(" Ficha inválida.");
-                            }
-                        } else if (lado == 2) {
-                            if (numero3 >= 0 && numero3 < 7 && j2.getMano()[numero3] != null &&
-                                    (tablero[fichaLD - 1].ladoB == 99 || j2.getMano()[numero3].ladoA == 99 || tablero[fichaLD - 1].ladoB == j2.getMano()[numero3].ladoA)) {
-
-                                tablero[fichaLD] = j2.getMano()[numero3];
-                                j2.getMano()[numero3] = null;
-                                fichaLD++;
-                                fichasJ2--;
-                                turnoJugador = 0;
-                            } else {
-                                System.out.println("Ficha inválida.");
-                            }
+                    if (tipoOponente == 2) {
+                        // --- LÓGICA DEL BOT AUTOMÁTICO ---
+                        printManoJugador(j2, nombre2);
+                        int valorExtremoDerecho = (tablero[fichaLD - 1] != null && tablero[fichaLD - 1].ladoB != 99) ? tablero[fichaLD - 1].ladoB : 0;
+                        
+                        Jugador.Ficha respuesta = bot.responder(valorExtremoDerecho);
+                        if (respuesta == null) {
+                            System.out.println("El bot pasa el turno.");
+                        } else {
+                            System.out.println("El bot juega: " + respuesta);
+                            tablero[fichaLD] = respuesta;
+                            fichaLD++;
+                            fichasJ2--;
                         }
-                    } else if (opcion == 2) {
-                        Jugador.Ficha nuevaFicha = j2.tomarDelPozo(numero);
-                        boolean agregado = false;
-                        for (int i = 0; i < j2.getMano().length; i++) {
-                            if (j2.getMano()[i] == null) {
-                                j2.getMano()[i] = nuevaFicha;
-                                fichasJ2++;
-                                agregado = true;
-                                System.out.println(" Has tomado del pozo la ficha: " + nuevaFicha + " y se guardó en la posición [" + i + "]");
-                                break;
+                        turnoJugador = 0; // Pasa el turno al jugador 1
+                    } else {
+                        // --- LÓGICA DE JUGADOR HUMANO 2 ---
+                        printManoJugador(j2, nombre2);
+
+                        System.out.println("\n¿Qué desea hacer?");
+                        System.out.println("1: Colocar una ficha");
+                        System.out.println("2: Tomar del pozo");
+                        System.out.println("3: Pasar");
+                        int opcion = scanner.nextInt();
+
+                        if (opcion == 1) {
+                            System.out.println("¿Qué número de ficha de tu mano desea colocar? (0 a 6)");
+                            int numero3 = scanner.nextInt();
+
+                            System.out.println("¿De qué lado desea colocarlo? (1: Izquierdo, 2: Derecho)");
+                            int lado = scanner.nextInt();
+
+                            if (lado == 1) {
+                                if (numero3 >= 0 && numero3 < 7 && j2.getMano()[numero3] != null &&
+                                        (j2.getMano()[numero3].ladoB == 99 || tablero[fichasLI + 1].ladoA == 99 || j2.getMano()[numero3].ladoB == tablero[fichasLI + 1].ladoA)) {
+
+                                    tablero[fichasLI] = j2.getMano()[numero3];
+                                    j2.getMano()[numero3] = null;
+                                    fichasLI--;
+                                    fichasJ2--;
+                                    turnoJugador = 0;
+                                } else {
+                                    System.out.println(" Ficha inválida.");
+                                }
+                            } else if (lado == 2) {
+                                if (numero3 >= 0 && numero3 < 7 && j2.getMano()[numero3] != null &&
+                                        (tablero[fichaLD - 1].ladoB == 99 || j2.getMano()[numero3].ladoA == 99 || tablero[fichaLD - 1].ladoB == j2.getMano()[numero3].ladoA)) {
+
+                                    tablero[fichaLD] = j2.getMano()[numero3];
+                                    j2.getMano()[numero3] = null;
+                                    fichaLD++;
+                                    fichasJ2--;
+                                    turnoJugador = 0;
+                                } else {
+                                    System.out.println("Ficha inválida.");
+                                }
                             }
+                        } else if (opcion == 2) {
+                            Jugador.Ficha nuevaFicha = j2.tomarDelPozo(numero);
+                            boolean agregado = false;
+                            for (int i = 0; i < j2.getMano().length; i++) {
+                                if (j2.getMano()[i] == null) {
+                                    j2.getMano()[i] = nuevaFicha;
+                                    fichasJ2++;
+                                    agregado = true;
+                                    System.out.println(" Has tomado del pozo la ficha: " + nuevaFicha + " y se guardó en la posición [" + i + "]");
+                                    break;
+                                }
+                            }
+                            if (!agregado) {
+                                System.out.println("⚠️️ No hay espacios vacíos en tu mano para tomar otra ficha.");
+                            }
+                            turnoJugador = 0;
+                        } else if (opcion == 3) {
+                            turnoJugador = 0;
                         }
-                        if (!agregado) {
-                            System.out.println("⚠️ No hay espacios vacíos en tu mano para tomar otra ficha.");
-                        }
-                        turnoJugador = 0;
-                    } else if (opcion == 3) {
-                        turnoJugador = 0;
                     }
                 }
             }
@@ -238,7 +280,6 @@ public class Partida {
                 int puntosGanados = 0;
                 for (Jugador.Ficha f : j2.getMano()) {
                     if (f != null) {
-
                         int valA = (f.ladoA == 99) ? 0 : f.ladoA;
                         int valB = (f.ladoB == 99) ? 0 : f.ladoB;
                         puntosGanados += (valA + valB);
